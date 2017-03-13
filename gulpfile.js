@@ -16,7 +16,7 @@ var bases = {
 var paths = {
   js: ['src/js/**/*.js'],
   sass: ['src/scss/**/*.scss'],
-  imgs: ['src/imgs/**/*'],
+  imgs: ['src/img/**/*'],
   html: ['src/**/*.html']
 }
 
@@ -48,7 +48,7 @@ gulp.task('sass', ['clean'], function() {
 gulp.task('imagemin', ['clean'], function() {
   gulp.src(paths.imgs)
     .pipe(imagemin())
-    .pipe(gulp.dest(bases.dist + 'images/'));
+    .pipe(gulp.dest(bases.dist + 'img/'));
 });
 
 // Copy all other files to dist directly
