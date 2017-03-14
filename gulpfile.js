@@ -39,7 +39,7 @@ gulp.task('js', ['clean'], function() {
 // Compile sass into CSS & auto-inject into browsers
 gulp.task('sass', ['clean'], function() {
   return gulp.src(paths.sass)
-    .pipe(sass())
+    .pipe(sass.sync().on('error', sass.logError))
     .pipe(gulp.dest("dist/css"))
     .pipe(browserSync.stream());
 });
