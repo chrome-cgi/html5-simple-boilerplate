@@ -22,22 +22,23 @@ var paths = {
 
 // Delete the dist directory
 gulp.task('clean', function() {
-  return gulp.src(bases.dist)
+  return gulp.src(bases.dist + '**/*')
     .pipe(clean());
 });
 
 // Process scripts and concatenate them into one output file
-gulp.task('js', ['clean'], function() {
+gulp.task('js', function() {
   gulp.src(paths.js)
     .pipe(jshint())
     .pipe(jshint.reporter('default'))
     .pipe(uglify())
     .pipe(concat('app.min.js'))
-    .pipe(gulp.dest(bases.dist + 'js/'));
+    .pipe(gulp.dest(bases.dist + 'js/'))
+    .pipe(browserSync.stream());
 });
 
 // Compile sass into CSS & auto-inject into browsers
-gulp.task('sass', ['clean'], function() {
+gulp.task('sass', function() {
   return gulp.src(paths.sass)
     .pipe(sass.sync().on('error', sass.logError))
     .pipe(gulp.dest("dist/css"))
@@ -45,17 +46,19 @@ gulp.task('sass', ['clean'], function() {
 });
 
 // Imagemin images and ouput them in dist
-gulp.task('imagemin', ['clean'], function() {
+gulp.task('imagemin', function() {
   gulp.src(paths.imgs)
     .pipe(imagemin())
-    .pipe(gulp.dest(bases.dist + 'img/'));
+    .pipe(gulp.dest(bases.dist + 'img/'))
+    .pipe(browserSync.stream());
 });
 
 // Copy all other files to dist directly
-gulp.task('copy', ['clean'], function() {
+gulp.task('copy', function() {
   // Copy html
   gulp.src(paths.html)
-    .pipe(gulp.dest(bases.dist));
+    .pipe(gulp.dest(bases.dist))
+    .pipe(browserSync.stream());
 });
 
 gulp.task('build', ['clean', 'js', 'sass', 'imagemin', 'copy'])
@@ -66,8 +69,10 @@ gulp.task('serve', ['build'], function() {
     server: bases.dist
   });
 
-  gulp.watch(bases.src + '**/*', ['build'])
-    .on('change', browserSync.reload);
+  gulp.watch(paths.sass, ['sass']);
+  gulp.watch(bases.src + "js/**/*", ['js']);
+  gulp.watch(bases.src + 'img/**/*', ['imagemin']);
+  gulp.watch(bases.src + '**/*.html', ['copy']);
 });
 
 gulp.task('default', ['serve']);
